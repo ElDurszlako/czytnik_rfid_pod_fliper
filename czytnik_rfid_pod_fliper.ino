@@ -1,14 +1,19 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-#define RST_PIN   22 
-#define SS_PIN    5  
-#define LED_PIN   13 
+// --- NOWE PINY DLA ESP32-C3 ---
+#define RST_PIN   9
+#define SS_PIN    10
+#define LED_PIN   8
+
+// Definiujemy piny dla magistrali SPI
+#define SCK_PIN   6
+#define MISO_PIN  5
+#define MOSI_PIN  7
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-// --- KONFIGURACJA ZAMKA ---
-// Tutaj wpisujemy UID Twojej głównej karty (AB 4E 13 00)
+// Tutaj wpisujemy UID Twojej głównej karty
 byte authorizedUID[4] = {0xAB, 0x4E, 0x13, 0x00};
 
 void setup() {
@@ -17,7 +22,8 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW); 
 
-  SPI.begin(); 
+  // KRYTYCZNA ZMIANA: Inicjalizacja SPI z jawnym podaniem pinów dla ESP32-C3!
+  SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN); 
   mfrc522.PCD_Init();
   
   // Wzmocnienie anteny na maxa
